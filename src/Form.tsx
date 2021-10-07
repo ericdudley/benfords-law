@@ -1,11 +1,16 @@
 import { InputLabel, MenuItem, Select } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "./App";
 import "./App.css";
 import { Attribute } from "./types";
+import { ATTRIBUTE_HANDLERS } from "./utils";
 
 export const Form = () => {
-  const { attribute, setAttribute } = useContext(AppContext);
+  const { clearRows, attribute, setAttribute } = useContext(AppContext);
+
+  useEffect(() => {
+    clearRows();
+  }, [attribute]);
 
   return (
     <div>
@@ -19,12 +24,14 @@ export const Form = () => {
           setAttribute(event.target.value as Attribute);
         }}
       >
-        <MenuItem value={"none"}>Name number, age, postcode...</MenuItem>
-        <MenuItem value={"name"}>Name number</MenuItem>
-        <MenuItem value={"postcode"}>Postcode</MenuItem>
-        <MenuItem value={"age"}>Age</MenuItem>
-        <MenuItem value={"latitude"}>Latitude</MenuItem>
-        <MenuItem value={"street number"}>Street Number</MenuItem>
+        <MenuItem disabled value={"none"}>
+          Fibonacci sequence, book references, currencies...
+        </MenuItem>
+        {Array.from(Object.keys(ATTRIBUTE_HANDLERS)).map((key) => (
+          <MenuItem key={key} value={key}>
+            {key}
+          </MenuItem>
+        ))}
       </Select>
     </div>
   );

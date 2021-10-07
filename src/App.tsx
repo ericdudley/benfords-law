@@ -12,6 +12,7 @@ export const AppContext = createContext({
   setAttribute: (attribute: Attribute) => {},
   rows: [] as Row[],
   appendRows: (rows: Row[]) => {},
+  clearRows: () => {},
 });
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
       value={{
         attribute,
         setAttribute,
+        clearRows: () => setRows([]),
         rows,
         appendRows: (newRows: Row[]) =>
           setRows((oldRows) => oldRows.concat(newRows)),
@@ -53,8 +55,8 @@ function App() {
           <Box mt={2}>
             <Container maxWidth="md">
               <Typography variant="h6">
-                On this page, we will fetch live data to test if Benford's Law
-                will apply to it.
+                On this page, we will fetch data from various public APIs to
+                test if Benford's Law will apply to it.
               </Typography>
               <Form />
               <Fetch />

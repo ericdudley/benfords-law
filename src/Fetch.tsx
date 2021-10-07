@@ -12,8 +12,7 @@ import { Box } from "@mui/system";
 import React, { useContext, useRef, useState } from "react";
 import { AppContext } from "./App";
 import "./App.css";
-import { Row } from "./types";
-import { get, getData, makeid } from "./utils";
+import { ATTRIBUTE_HANDLERS } from "./utils";
 
 export const Fetch = () => {
   const { attribute, rows, appendRows } = useContext(AppContext);
@@ -27,21 +26,16 @@ export const Fetch = () => {
     const effect = async () => {
       setIsFetching(true);
       isFetchingRef.current = true;
-      const seed = makeid(8);
-      if (attribute) {
+      const seed = Math.random();
+      if (hasAttr) {
         for (let i = 1; isFetchingRef.current && i <= 10; i += 1) {
-          const response = await get(
-            `/api?seed=${seed}&results=500&nat=us&page=${
-              lastFetchedPageRef.current + 1
-            }`
+          const rows = await ATTRIBUTE_HANDLERS[attribute](
+            lastFetchedPageRef.current + 1,
+            seed
           );
-          if (response) {
+          if (rows) {
             lastFetchedPageRef.current += 1;
-            const json = await response.json();
-            const newRows: Row[] = json && json.results;
-            if (newRows) {
-              appendRows(newRows);
-            }
+            appendRows(rows);
           }
         }
         setIsFetching(false);
@@ -90,9 +84,9 @@ export const Fetch = () => {
                   .map((row, idx) => ({ row, idx }))
                   .slice(rows.length - 5, rows.length)
                   .map(({ row, idx }) => (
-                    <TableRow>
+                    <TableRow key={row.id}>
                       <TableCell>{idx + 1}</TableCell>
-                      <TableCell>{getData(attribute, row)}</TableCell>
+                      <TableCell>{row.label}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

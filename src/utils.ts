@@ -1,70 +1,151 @@
-import { Attribute, Row } from "./types";
+import { Row } from "./types";
 
-export function makeid(length: number): string {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+export function getFirstNumber(num: number): string | undefined {
+  if (num === Infinity || num === -Infinity || num < 0) {
+    return undefined;
   }
-  return result;
+
+  const firstNumber = Number(String(num)[0]);
+  return 1 <= firstNumber && firstNumber <= 9 ? String(firstNumber) : undefined;
 }
 
-export function getNumber(text: string) {
-  const alphabet = "abcdefghijklmnopqrstuvwxyz";
-  let sum = Array.from(text.toLowerCase()).reduce(
-    (total, char) => total + alphabet.indexOf(char) + 1,
-    0
-  );
-  while (sum >= 10) {
-    let sumString = String(sum);
-    sum = Array.from(sumString).reduce(
-      (total, char) => total + Number(char),
-      0
+export function getBigIntString(bigInt: BigInt) {
+  const maxLength = 24;
+  const str = bigInt.toString();
+  if (str.length > maxLength) {
+    const arr = Array.from(str);
+    arr.splice(maxLength, arr.length - maxLength);
+    return arr.join("") + "...";
+  } else {
+    return str;
+  }
+}
+
+type AttributeHandler = (page: number, seed: number) => Promise<Row[]>;
+export const ATTRIBUTE_HANDLERS: Record<string, AttributeHandler> = {
+  "Random numbers": async (page: number, seed: number) => {
+    const pageSize = 1000;
+    const results: Row[] = [];
+    for (let i = 0; i < pageSize; i += 1) {
+      const value = BigInt(Math.floor(Math.random() * 100000000000));
+      const valueStr = getBigIntString(value);
+      results.push({
+        firstNumber: valueStr[0],
+        id: Math.random().toString(),
+        label: valueStr,
+      });
+    }
+
+    return new Promise((res) => setTimeout(() => res(results), 500));
+  },
+  "Fibonacci Sequence": async (page: number, seed: number) => {
+    const pageSize = 40;
+    const results: Row[] = [];
+    let a = BigInt(0);
+    let b = BigInt(1);
+    let count = 0;
+    while (count < page * pageSize) {
+      count += 1;
+      let newB = a + b;
+      a = b;
+      b = newB;
+
+      const firstNumber = getBigIntString(b)[0];
+      if (count > (page - 1) * pageSize && firstNumber) {
+        results.push({
+          firstNumber,
+          id: Math.random().toString(),
+          label: getBigIntString(b),
+        });
+      }
+    }
+
+    return new Promise((res) => setTimeout(() => res(results), 500));
+  },
+  Factorials: async (page: number, seed: number) => {
+    const pageSize = 100;
+    const results: Row[] = [];
+
+    for (let i = (page - 1) * pageSize; i < page * pageSize; i += 1) {
+      let value = BigInt(1);
+      for (let j = BigInt(1); j <= i; j = j + BigInt(1)) {
+        value = value * j;
+      }
+      const firstNumber = value.toString()[0];
+      if (firstNumber) {
+        results.push({
+          firstNumber,
+          id: Math.random().toString(),
+          label: `!${i} = ${getBigIntString(value)}`,
+        });
+      }
+    }
+    return new Promise((res) => setTimeout(() => res(results), 500));
+  },
+  "Number of references to published works": async (
+    page: number,
+    seed: number
+  ) => {
+    const pageSize = 100;
+    const response = await fetch(
+      `https://api.crossref.org/works?sample=${pageSize}&filter=has-references:true&mailto=crossrefapi@ericdudley.com`
     );
-  }
+    const json: {
+      message: {
+        items: {
+          "is-referenced-by-count": number;
+          title: string[];
+          ISSN: string[];
+          page: string;
+        }[];
+      };
+    } = await response.json();
 
-  return sum;
-}
+    const results = [];
 
-export function getFirstDigit(attr: Attribute, row: Row): number {
-  if (attr === "name") {
-    return getNumber(row.name.last);
-  } else if (attr === "postcode") {
-    return Number(String(row.location.postcode)[0]);
-  } else if (attr === "age") {
-    return Number(String(row.dob.age)[0]);
-  } else if (attr === "latitude") {
-    return Number(
-      Array.from(row.location.coordinates.latitude).find(
-        (char) => Number(char) >= 1 && Number(char) <= 9
+    for (let item of json.message.items) {
+      const firstNumber = getFirstNumber(item["is-referenced-by-count"]);
+      if (firstNumber) {
+        results.push({
+          firstNumber,
+          id: (item.ISSN && item.ISSN[0]) || Math.random().toString(),
+          label: (item.title && item.title[0]) || "Unknown",
+        });
+      }
+    }
+    return results;
+  },
+  "Currency values in other currencies": async (page: number, seed: number) => {
+    const currenciesJson: Record<string, string> = await (
+      await fetch(
+        "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies.min.json"
       )
-    );
-  } else if (attr === "street number") {
-    return Number(String(row.location.street.number)[0]);
-  }
-  return 0;
-}
+    ).json();
+    const currencies = Array.from(Object.keys(currenciesJson));
+    const baseCurrency =
+      currencies[
+        (Math.floor(seed * (currencies.length - 1)) + page * 4) %
+          (currencies.length - 1)
+      ];
 
-export function getData(attr: Attribute, row: Row): string {
-  if (attr === "name") {
-    return row.name.last;
-  } else if (attr === "postcode") {
-    return String(row.location.postcode);
-  } else if (attr === "age") {
-    return String(row.dob.age);
-  } else if (attr === "latitude") {
-    return row.location.coordinates.latitude;
-  } else if (attr === "street number") {
-    return String(row.location.street.number);
-  }
-  return "";
-}
-export function get(endpoint: string): Promise<Response | undefined> {
-  return new Promise((res, rej) => {
-    fetch(endpoint)
-      .then((response) => setTimeout(() => res(response), 1000))
-      .catch(() => res(undefined));
-  });
-}
+    const response = await fetch(
+      `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${baseCurrency}.min.json`
+    );
+    const json: Record<string, Record<string, number>> = await response.json();
+
+    const results = [];
+
+    for (let currency of Array.from(Object.keys(json[baseCurrency]))) {
+      const value = json[baseCurrency][currency];
+      const firstNumber = getFirstNumber(value);
+      if (firstNumber) {
+        results.push({
+          firstNumber,
+          id: `usd-${currency}`,
+          label: ` 1 ${baseCurrency} = ${json[baseCurrency][currency]} ${currency}`,
+        });
+      }
+    }
+    return results;
+  },
+};

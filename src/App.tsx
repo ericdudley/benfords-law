@@ -32,16 +32,16 @@ function App() {
           setRows((oldRows) => oldRows.concat(newRows)),
       }}
     >
-      <div>
-        <Helmet>
-          <title>Benford's Law</title>
-          <meta
-            name="description"
-            content="A demonstration of the mathematical distribution, Benford's Law."
-          />
-          <meta name="author" content="Eric Dudley" />
-        </Helmet>
-        <CssBaseline />
+      <Helmet>
+        <title>Benford's Law</title>
+        <meta
+          name="description"
+          content="A demonstration of the mathematical distribution, Benford's Law."
+        />
+        <meta name="author" content="Eric Dudley" />
+      </Helmet>
+      <CssBaseline />
+      <div className="app">
         <main>
           <Container maxWidth="md">
             <Typography variant="h3" mt={2}>
@@ -72,7 +72,9 @@ function App() {
             </Box>
           </Container>
         </main>
-        <Footer />
+        <footer>
+          <Footer />
+        </footer>
       </div>
     </AppContext.Provider>
   );

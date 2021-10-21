@@ -1,5 +1,5 @@
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
-import { AccountCircle, AttachMoney } from "@mui/icons-material";
+import { AccountCircle, AttachMoney, Code } from "@mui/icons-material";
 import React, { FunctionComponent } from "react";
 
 export const Footer: FunctionComponent = () => {
@@ -10,6 +10,7 @@ export const Footer: FunctionComponent = () => {
         const links: Record<string, string> = {
           website: "https://ericdudley.com",
           coffee: "https://buymeacoffee.com/ericdudley",
+          code: "https://github.com/ericdudley/benfords-law",
         };
         window.open(links[value as string] as string);
       }}
@@ -23,6 +24,11 @@ export const Footer: FunctionComponent = () => {
         value="coffee"
         label="Buy me a coffee"
         icon={<AttachMoney />}
+      />
+      <BottomNavigationAction
+        value="code"
+        label="Source code"
+        icon={<Code />}
       />
     </BottomNavigation>
   );

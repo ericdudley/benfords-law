@@ -15,12 +15,10 @@ export const Form = () => {
 
   return (
     <div>
-      <InputLabel id="attribute-select">
-        Select what data set you would like to use
-      </InputLabel>
+      <InputLabel id="attribute-select">Select a data set to test</InputLabel>
       <Select labelId="attribute-select" value={attribute} onChange={onChange}>
         <MenuItem disabled value={"none"}>
-          Fibonacci sequence, book references, currencies...
+          Factorials, currency conversions, etc.
         </MenuItem>
         {Array.from(Object.keys(ATTRIBUTE_HANDLERS)).map((key) => (
           <MenuItem key={key} value={key}>

@@ -109,13 +109,16 @@ export const ATTRIBUTE_HANDLERS: Record<string, AttributeHandler> = {
         results.push({
           firstNumber,
           id: (item.ISSN && item.ISSN[0]) || Math.random().toString(),
-          label: (item.title && item.title[0]) || "Unknown",
+          label:
+            (item.title &&
+              `${item.title[0]} (${item["is-referenced-by-count"]} references)`) ||
+            "Unknown",
         });
       }
     }
     return results;
   },
-  "Currency values in other currencies": async (page: number, seed: number) => {
+  "Today's currency conversions": async (page: number, seed: number) => {
     const currenciesJson: Record<string, string> = await (
       await fetch(
         "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies.min.json"

@@ -43,7 +43,7 @@ export const Chart = () => {
 
   return (
     <div>
-      {rows.length >= 5 && (
+      {rows.length >= 3 && (
         <Box mt={2}>
           <Box mt={4}>
             <ResponsiveContainer width="100%" height={300}>

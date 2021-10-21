@@ -12,6 +12,7 @@ import { Box } from "@mui/system";
 import React, { useContext, useRef, useState } from "react";
 import { AppContext } from "./App";
 import "./App.css";
+import { Timer } from "./Timer";
 import { ATTRIBUTE_HANDLERS } from "./utils";
 
 export const Fetch = () => {
@@ -19,7 +20,6 @@ export const Fetch = () => {
   const [isFetching, setIsFetching] = useState(false);
   const isFetchingRef = useRef(false);
   const lastFetchedPageRef = useRef(0);
-
   const hasAttr = attribute && attribute !== "none";
 
   const startFetching = () => {
@@ -67,11 +67,14 @@ export const Fetch = () => {
             <Box ml={1}>
               <CircularProgress size={18} />
             </Box>
+            <Box ml={1}>
+              <Timer isActive={isFetching} />
+            </Box>
           </Box>
         )}
-        {rows.length >= 5 && (
+        {rows.length >= 3 && (
           <Box mt={2}>
-            <Typography>Fetched {rows.length} rows</Typography>
+            <Typography>Last 3 of {rows.length} rows</Typography>
             <Table>
               <TableHead>
                 <TableRow>
@@ -82,7 +85,7 @@ export const Fetch = () => {
               <TableBody>
                 {rows
                   .map((row, idx) => ({ row, idx }))
-                  .slice(rows.length - 5, rows.length)
+                  .slice(rows.length - 3, rows.length)
                   .map(({ row, idx }) => (
                     <TableRow key={row.id}>
                       <TableCell>{idx + 1}</TableCell>

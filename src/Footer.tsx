@@ -5,7 +5,7 @@ import { Box } from "@mui/system";
 
 export const Footer: FunctionComponent = () => {
   return (
-    <Box mt="64px">
+    <Box mt="64px" pb="32px">
       <BottomNavigation
         showLabels
         onChange={(event, value) => {

@@ -1,4 +1,4 @@
-export type Attribute = "none" | "name" | "Fibonacci Sequence";
+export type Attribute = "name" | "Fibonacci Sequence";
 
 export interface Row {
   label: string;

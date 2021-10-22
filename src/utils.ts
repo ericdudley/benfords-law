@@ -82,10 +82,7 @@ export const ATTRIBUTE_HANDLERS: Record<string, AttributeHandler> = {
     }
     return new Promise((res) => setTimeout(() => res(results), 500));
   },
-  "Number of references to published works": async (
-    page: number,
-    seed: number
-  ) => {
+  "References to published works": async (page: number, seed: number) => {
     const pageSize = 100;
     const response = await fetch(
       `https://api.crossref.org/works?sample=${pageSize}&filter=has-references:true&mailto=crossrefapi@ericdudley.com`

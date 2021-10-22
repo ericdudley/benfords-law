@@ -17,9 +17,6 @@ export const Form = () => {
     <div>
       <InputLabel id="attribute-select">Select a data set to test</InputLabel>
       <Select labelId="attribute-select" value={attribute} onChange={onChange}>
-        <MenuItem disabled value={"none"}>
-          Factorials, currency conversions, etc.
-        </MenuItem>
         {Array.from(Object.keys(ATTRIBUTE_HANDLERS)).map((key) => (
           <MenuItem key={key} value={key}>
             {key}

@@ -43,32 +43,30 @@ export const Chart = () => {
 
   return (
     <div>
-      {rows.length >= 3 && (
-        <Box mt={2}>
-          <Box mt={4}>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={chartData as any}>
-                <XAxis dataKey="number" />
-                <YAxis unit="%" />
-                <Legend />
-                <Bar name={attribute} dataKey="percentage" fill="#1976d2" />
-                <Line
-                  name="Benford's Law"
-                  dataKey="benfords"
-                  fill="#800080"
-                  stroke="#800080"
-                />
-                <Line
-                  name="Uniform"
-                  dataKey="expected"
-                  fill="#ff0000"
-                  stroke="#ff0000"
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </Box>
+      <Box mt={2}>
+        <Box mt={4}>
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={chartData as any}>
+              <XAxis dataKey="number" />
+              <YAxis unit="%" />
+              <Legend />
+              <Bar name={attribute} dataKey="percentage" fill="#1976d2" />
+              <Line
+                name="Benford's Law"
+                dataKey="benfords"
+                fill="#800080"
+                stroke="#800080"
+              />
+              <Line
+                name="Uniform"
+                dataKey="expected"
+                fill="#ff0000"
+                stroke="#ff0000"
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
         </Box>
-      )}
+      </Box>
     </div>
   );
 };

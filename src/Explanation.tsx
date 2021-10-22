@@ -4,6 +4,9 @@ import React, { FunctionComponent } from "react";
 export const Explanation: FunctionComponent = () => {
   return (
     <Box mt="16px">
+      <Typography variant="h5" gutterBottom>
+        How does this work?
+      </Typography>
       <Typography gutterBottom>
         An intuitive way to understand Benford's Law is to look at how much
         growth is required to grow from one number to another.

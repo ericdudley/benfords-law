@@ -1,6 +1,6 @@
 import { Container, CssBaseline, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { createContext, useState } from "react";
+import React, { createContext, useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 import "./App.css";
 import { Chart } from "./Chart";
@@ -18,18 +18,23 @@ export const AppContext = createContext({
 });
 
 function App() {
-  const [attribute, setAttribute] = useState<Attribute>("none");
+  const [attribute, setAttribute] = useState<Attribute>("Fibonacci Sequence");
   const [rows, setRows] = useState<Row[]>([]);
+  const appendRows = useCallback(
+    (newRows) => {
+      setRows((oldRows) => oldRows.concat(newRows));
+    },
+    [setRows]
+  );
 
   return (
     <AppContext.Provider
       value={{
+        appendRows,
         attribute,
+        rows,
         setAttribute,
         clearRows: () => setRows([]),
-        rows,
-        appendRows: (newRows: Row[]) =>
-          setRows((oldRows) => oldRows.concat(newRows)),
       }}
     >
       <Helmet>
@@ -60,7 +65,6 @@ function App() {
                 digit is likely to be small."
               </Typography>
             </Box>
-            <Explanation />
             <Box mt={2}>
               <Typography variant="h6">
                 Using the form below, you can test several data sets to see if
@@ -70,6 +74,7 @@ function App() {
               <Fetch />
               <Chart />
             </Box>
+            <Explanation />
           </Container>
         </main>
         <footer>
